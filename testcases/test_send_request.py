@@ -1,4 +1,3 @@
-
 import requests
 
 
@@ -19,7 +18,7 @@ class TestSendRequests:
         print(rep.json())
         TestSendRequests.access_token = rep.json()['access_token']
 
-    def test_post_flag(self):
+    def test_post_flag(self, conn_database):
         url = "https://api.weixin.qq.com/cgi-bin/tags/update?access_token"+TestSendRequests.access_token+""
         data = {"tag": {"id":134, "name":"广东人"}}
         rep = TestSendRequests.session.request("post", url, json=data)
@@ -39,7 +38,7 @@ class TestSendRequests:
         url = "http://ihrm2-test.itheima.net/api/sys/user"
         data = {
         "username": "王哈啦",
-        "mobile": "18538178019",
+        "mobile": "18538178087",
         "timeOfEntry": "2023-09-11",
         "formOfEmployment": 1,
         "departmentName": "测试0789",
@@ -48,9 +47,9 @@ class TestSendRequests:
         "correctionTime": "2023-09-01T15:20:00.000Z"
     }
         headers = {
-            "Authorization":TestSendRequests.token
+            "Authorization": TestSendRequests.token
         }
-        rep = TestSendRequests.session.request("post", url, json=data,headers=headers)
+        rep = TestSendRequests.session.request("post", url, json=data, headers=headers)
         print(rep.json())
 
 
