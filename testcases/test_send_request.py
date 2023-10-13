@@ -1,9 +1,9 @@
 import requests
 
+from common.yaml_util import YamlUtil
+
 
 class TestSendRequests:
-    access_token = ""
-    token = ""
     session = requests.session()
 
     def test_get_token(self):
@@ -16,13 +16,18 @@ class TestSendRequests:
 
         rep = TestSendRequests.session.request("get", url=url, params=data)
         print(rep.json())
-        TestSendRequests.access_token = rep.json()['access_token']
+        YamlUtil().write_extract_yaml({'access_token': rep.json()['access_token']})
+        assert 'access_token' in rep.json()
+
 
     def test_post_flag(self, conn_database):
-        url = "https://api.weixin.qq.com/cgi-bin/tags/update?access_token"+TestSendRequests.access_token+""
-        data = {"tag": {"id":134, "name":"广东人"}}
+        access_token = YamlUtil().read_extract_yaml('access_token')
+        url = "https://api.weixin.qq.com/cgi-bin/tags/update?access_token"+access_token+""
+        data = {"tag": {"id": 134, "name": "广东人"}}
         rep = TestSendRequests.session.request("post", url, json=data)
         print(rep.json())
+        result = rep.json()
+        assert result['errcode'] == 41001
 
     def test_post_login(self):
         url = "http://ihrm2-test.itheima.net/api/sys/login"
@@ -32,7 +37,7 @@ class TestSendRequests:
     }
         rep = TestSendRequests.session.request("post", url, json=data)
         print(rep.json())
-        TestSendRequests.token = rep.json()['data']
+        YamlUtil().write_extract_yaml({'token': rep.json()['data']})
 
     def test_post_add(self):
         url = "http://ihrm2-test.itheima.net/api/sys/user"
@@ -46,8 +51,9 @@ class TestSendRequests:
         "workNumber": "389",
         "correctionTime": "2023-09-01T15:20:00.000Z"
     }
+        token = YamlUtil().read_extract_yaml('token')
         headers = {
-            "Authorization": TestSendRequests.token
+            "Authorization": token
         }
         rep = TestSendRequests.session.request("post", url, json=data, headers=headers)
         print(rep.json())
